@@ -8,6 +8,10 @@
     {
       "src": "client/vendor/**/*.+(js|css|html)",
       "dest": "vendor"
+    },
+    {
+      "src": "client/index.html",
+      "dest": ""
     }
   ],
   "js": {

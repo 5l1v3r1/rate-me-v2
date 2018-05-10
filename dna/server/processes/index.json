@@ -15,7 +15,10 @@
     "organic-express-static": {
       "source": "organic-express-static",
       "reactOn": "ExpressServer",
-      "mount": "@client.public"
+      "mount": "@client.public",
+      "st": {
+        "index": "index.html"
+      }
     }
   },
   "membrane": {

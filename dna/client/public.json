@@ -1,5 +1,5 @@
 {
-  "public": [
-    { "path": "public" }
+  "": [
+    { "path": "public/release" }
   ]
 }
