@@ -16,14 +16,23 @@ module.exports = (plasma, dna, helpers) => {
       }
     ],
 
+    'GET /me': [
+      auth.authorize(dna.jwtSecret),
+      (req, res, next) => {
+        return res
+          .status(200)
+          .send(req.user.toObject())
+      }
+    ],
+
     'POST /login': (req, res, next) => {
       // TODO: real authentication
-      const userId = 1
+      const seedUserEmail = 'aivo@devlabs.bg'
 
-      User.find({id: userId}, (err, user) => {
+      User.findOne({ email: seedUserEmail }, (err, user) => {
         if (err) return next(err)
 
-        const token = createToken(user, dna.jwtSecret)
+        const token = auth.createToken(user, dna.jwtSecret)
 
         return res
           .status(200)

@@ -5,13 +5,13 @@ module.exports = function Seeder(plasma, dna) {
   this.dna = dna
 
   if (this.dna.reactOn) {
-    plasma.on(this.dna.reactOn, module.exports.seedIdDbEmpty, this)
+    plasma.on(this.dna.reactOn, module.exports.seedIfDbEmpty, this)
   } else {
-    module.exports.seedIdDbEmpty()
+    module.exports.seedIfDbEmpty()
   }
 }
 
-module.exports.seedIdDbEmpty = () => {
+module.exports.seedIfDbEmpty = () => {
   User.count({}, (err, count) => {
     if (err) return console.log(err)
     if (count !== 0) return console.log('Seeding already done, continue...')
