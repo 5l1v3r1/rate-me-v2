@@ -4,7 +4,8 @@
       "log": true
     },
     "organic-api-routes": {
-      "log": true
+      "log": true,
+      "jwtSecret": "d8OdDdWYGOoE9Zmk"
     }
   },
   "membrane": {
