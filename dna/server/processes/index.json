@@ -2,7 +2,9 @@
   "plasma": {
     "organic-api-routes": {
       "source": "organic-express-routes",
-      "reactOn": ["ExpressServer"],
+      "reactOn": [
+        "ExpressServer"
+      ],
       "pattern": "/**/*.js",
       "path": "server/http/routes",
       "helpers": "server/http/helpers",
@@ -10,7 +12,10 @@
     },
     "organic-express-response": {
       "source": "organic-express-response",
-      "reactOn": ["ExpressServer", "ApiRoutesReady"]
+      "reactOn": [
+        "ExpressServer",
+        "ApiRoutesReady"
+      ]
     },
     "organic-express-static": {
       "source": "organic-express-static",
@@ -42,11 +47,21 @@
       "initScript": "server/initializers/express-app.js",
       "emitReady": "ExpressServer",
       "uploadsDir": "uploads",
-      "responders": ["server/http/responders/default"],
+      "responders": [
+        "server/http/responders/mongoose-errors",
+        "server/http/responders/default"
+      ],
       "expressSetupDoneOnce": [
         "ExpressServer",
         "ApiRoutesReady"
+      ],
+      "interceptors": [
+        "server/http/params"
       ]
+    },
+    "organic-mongoose": {
+      "source": "organic-mongoose",
+      "database": "@server.database"
     }
   }
 }
