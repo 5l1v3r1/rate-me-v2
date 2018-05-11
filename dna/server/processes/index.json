@@ -8,7 +8,8 @@
       "pattern": "/**/*.js",
       "path": "server/http/routes",
       "helpers": "server/http/helpers",
-      "emitReady": "ApiRoutesReady"
+      "emitReady": "ApiRoutesReady",
+      "jwtSecret": "vtRobAYVoUhT7mYy"
     },
     "organic-express-response": {
       "source": "organic-express-response",
@@ -62,6 +63,10 @@
     "organic-mongoose": {
       "source": "organic-mongoose",
       "database": "@server.database"
+    },
+    "seeder": {
+      "source": "./server/organelles/seeder.js",
+      "reactOn": "ApiRoutesReady"
     }
   }
 }
