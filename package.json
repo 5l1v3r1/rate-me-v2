@@ -9,8 +9,7 @@
     "develop": "angel develop",
     "watch": "angel watch",
     "build": "angel build",
-    "test:style": "eslint ./",
-    "db:seed": "node server/dbSeed.js"
+    "test:style": "eslint ./"
   },
   "author": "",
   "dependencies": {

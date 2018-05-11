@@ -63,6 +63,10 @@
     "organic-mongoose": {
       "source": "organic-mongoose",
       "database": "@server.database"
+    },
+    "seeder": {
+      "source": "./server/organelles/seeder.js",
+      "reactOn": "ApiRoutesReady"
     }
   }
 }
