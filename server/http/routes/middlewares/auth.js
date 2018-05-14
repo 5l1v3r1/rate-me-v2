@@ -53,7 +53,6 @@ const auth = {
 
           return next(null, user)
         })
-
       })
     }
   }

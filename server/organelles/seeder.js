@@ -4,8 +4,7 @@ const mongoose = require('mongoose')
 const User = require('../models/user')
 const Poll = require('../models/poll')
 
-module.exports = function Seeder(plasma, dna) {
-
+module.exports = function Seeder (plasma, dna) {
   this.dna = dna
 
   if (this.dna.reactOn) {
