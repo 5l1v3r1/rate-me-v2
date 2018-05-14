@@ -20,7 +20,8 @@ module.exports.seedIfDbEmpty = () => {
       email: 'aivo@devlabs.bg',
       password: 'nd2ibd57GJlAjOpS',
       firstname: 'George',
-      lastname: 'Restful'
+      lastname: 'Restful',
+      rate: 100
     }, (err, user) => {
       if (err) return console.log(err)
       return console.log('Seed done.')
