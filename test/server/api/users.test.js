@@ -42,4 +42,33 @@ describe('/api/version', function () {
       next()
     })
   })
+
+  it('PUTs user data', function (next) {
+    let newUserData = {
+      firstname: 'George',
+      lastname: 'Restful'
+    }
+
+    // mock organelle response
+    test.variables.cell.plasma.on('users-update', (args, next) => {
+      expect(args.userId).to.eq(this.user.id)
+      expect(args.data).to.deep.eq(newUserData)
+
+      return next()
+    })
+
+    request({
+      uri: test.variables.apiendpoint + '/users/' + this.user.id,
+      method: 'PUT',
+      body: newUserData,
+      json: true,
+      headers: {
+        authorization: this.authToken
+      }
+    }, function (err, res, body) {
+      if (err) return next(err)
+      expect(res.statusCode).to.eq(200)
+      next()
+    })
+  })
 })
