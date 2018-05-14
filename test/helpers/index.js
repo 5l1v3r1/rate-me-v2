@@ -35,11 +35,21 @@ test.initTestEnv = function (done) {
 test.startServer = function (next) {
   test.initTestEnv(function (err) {
     if (err) return next(err)
-    var cell = variables.cell = require('../../server/start')()
+    var cell = variables.cell = new (require('../../server/cell'))()
     var readyChemcals = _.get(test.variables, 'dna.server.processes.index.membrane.organic-express-server.expressSetupDoneOnce', ['ApiRoutesReady'])
     cell.plasma.on(readyChemcals, function (err) {
       if (err instanceof Error) return next(err)
       next && next()
+    })
+    cell.start(function (err) {
+      if (err) throw err
+      // # build server cell
+      cell.plasma.emit({type: 'build', branch: 'server.processes.index.plasma'}, function (err) {
+        if (err) throw err
+        cell.plasma.emit({type: 'build', branch: 'server.processes.index.membrane'}, function (err) {
+          if (err) throw err
+        })
+      })
     })
   })
 }
