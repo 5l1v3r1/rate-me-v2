@@ -1,7 +1,6 @@
 const User = require('../models/user')
 
-module.exports = function Seeder(plasma, dna) {
-
+module.exports = function Seeder (plasma, dna) {
   this.dna = dna
 
   if (this.dna.reactOn) {
