@@ -25,6 +25,19 @@ module.exports = (plasma, dna, helpers) => {
       }
     ],
 
+    'GET /:userId': [
+      auth.authorize(dna.jwtSecret),
+      (req, res, next) => {
+        plasma.emit({ type: 'users-get', userId: req.params.userId }, (err, user) => {
+          if (err) return next(err)
+
+          res.status(200).send(user)
+
+          return next()
+        })
+      }
+    ],
+
     'POST /login': (req, res, next) => {
       // TODO: real authentication
       const seedUserEmail = 'aivo@devlabs.bg'
