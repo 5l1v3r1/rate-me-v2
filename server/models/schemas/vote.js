@@ -3,6 +3,7 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 
 const schema = {
   userId: { type: ObjectId, ref: 'User' },
+  reason: String,
   approved: {
     type: Number,
     enum: [0, 1] // 0 - rejected; 1 - approved;
