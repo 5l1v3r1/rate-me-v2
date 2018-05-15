@@ -9,6 +9,7 @@ describe('organelles/polls', function () {
   const ObjectId = mongoose.Types.ObjectId
   const user1Id = ObjectId()
   const user2Id = ObjectId()
+  const pollId = ObjectId()
 
   before(done => {
     test.startServer(err => {
@@ -38,6 +39,7 @@ describe('organelles/polls', function () {
         next => {
           Poll
             .insertMany([{
+              _id: pollId,
               userId: user1Id,
               rate: 60,
               completedAt: null,
@@ -114,6 +116,60 @@ describe('organelles/polls', function () {
         expect(polls[2].approved).to.eq(null)
 
         return done()
+      })
+    })
+  })
+
+  it('updates a poll with "polls-update"', done => {
+    const plasma = test.getPlasma()
+    const dna = {}
+    PollsOrganelle(plasma, dna)
+
+    // set votes
+    const votesChemical = {
+      type: 'polls-update',
+      args: {
+        id: pollId,
+        votes: [{
+          userId: user2Id,
+          reason: 'last month raise',
+          approved: 0
+        }]
+      }
+    }
+    plasma.emit(votesChemical, (err, poll) => {
+      expect(err).to.not.exist
+      expect(poll).to.exist
+      expect(poll.votes.length).to.eq(1)
+
+      // set status
+      const statusChemical = {
+        type: 'polls-update',
+        args: {
+          id: pollId,
+          approved: false,
+          status: Poll.proposalStatuses[1]
+        }
+      }
+      plasma.emit(statusChemical, (err, poll) => {
+        expect(err).to.not.exist
+        expect(poll).to.exist
+        expect(poll.approved).to.eq(false)
+
+        Poll.findById(pollId, (err, poll) => {
+          if (err) return done(err)
+
+          expect(poll.rate).to.eq(60)
+          expect(poll.createdAt).to.exist
+          expect(poll.completedAt).to.exist
+          expect(poll.approved).to.eq(false)
+          expect(poll.votes.length).to.eq(1)
+          expect(poll.votes[0].approved).to.eq(0)
+          expect(poll.votes[0].reason).to.eq('last month raise')
+          expect(poll.status).to.eq(Poll.proposalStatuses[1])
+
+          return done()
+        })
       })
     })
   })
