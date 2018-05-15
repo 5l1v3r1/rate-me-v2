@@ -1,10 +1,11 @@
 const Poll = require('../models/poll')
 
 function getPolls (c, next) {
-  Poll.find({}, '-__v', (err, polls) => {
-    if (err) return next(err)
-    return next(null, polls)
-  })
+  Poll.find({}, '-__v')
+    .then(polls => {
+      next(null, polls)
+    })
+    .catch(err => next(err))
 }
 
 function createPoll (c, next) {
@@ -15,40 +16,41 @@ function createPoll (c, next) {
       completedAt: null,
       approved: null,
       votes: []
-    }, (err, poll) => {
-      if (err) return next(err)
-      return next(null, poll)
     })
+    .then(poll => {
+      next(null, poll)
+    })
+    .catch(err => next(err))
 }
 
 function updatePoll (c, next) {
   const args = c.args
   const updateKeys = ['approved', 'votes', 'status']
-  Poll.findById(args.id, (err, poll) => {
-    if (err) return next(err)
-    const pollPatch = {}
-    // pick values to patch
-    updateKeys.forEach(key => {
-      if (key in args) pollPatch[key] = args[key]
+  Poll.findById(args.id)
+    .then(poll => {
+      const pollPatch = {}
+      // pick values to patch
+      updateKeys.forEach(key => {
+        if (key in args) pollPatch[key] = args[key]
+      })
+      // fill up completed date if approved field is being set
+      if ('approved' in args) {
+        pollPatch['completedAt'] = Date.now()
+      }
+      Object.assign(poll, pollPatch)
+      poll.save()
+        .then(() => next(null, poll))
+        .catch(err => next(err))
     })
-    // fill up completed date if approved field is being set
-    if ('approved' in args) {
-      pollPatch['completedAt'] = Date.now()
-    }
-    Object.assign(poll, pollPatch)
-    poll.save(err => {
-      if (err) return next(err)
-      return next(null, poll)
-    })
-  })
+    .catch(err => next(err))
 }
 
 function deletePoll (c, next) {
   Poll.findByIdAndDelete(c.args.id)
-    .catch(err => next(err))
     .then(() => {
       next(null, true)
     })
+    .catch(err => next(err))
 }
 
 module.exports = function Polls (plasma, dna) {

@@ -173,4 +173,32 @@ describe('organelles/polls', function () {
       })
     })
   })
+
+  it('deletes with "polls-delete"', done => {
+    const plasma = test.getPlasma()
+    const dna = {}
+    PollsOrganelle(plasma, dna)
+
+    const chemical = {
+      type: 'polls-delete',
+      args: {
+        id: pollId
+      }
+    }
+    plasma.emit(chemical, (err, poll) => {
+      expect(err).to.not.exist
+
+      Poll.find({}, (err, polls) => {
+        if (err) return done(err)
+
+        // first added poll should be deleted
+        expect(polls.length).to.eq(2)
+        expect(polls[0].rate).to.eq(90)
+        // added in creates a poll with "polls-create"
+        expect(polls[1].rate).to.eq(75)
+
+        return done()
+      })
+    })
+  })
 })
