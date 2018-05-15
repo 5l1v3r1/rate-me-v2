@@ -90,7 +90,7 @@ const polls = [{
   approved: null,
   votes: [{
     userId: user1Id,
-    reason: 'no decresse for you',
+    reason: 'no decrease for you',
     approved: 0
   }, {
     userId: user3Id,
