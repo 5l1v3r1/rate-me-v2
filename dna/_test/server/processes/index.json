@@ -3,6 +3,7 @@
     "organic-express-server": {
       "port": 13371,
       "uploadsDir": "server/test/uploads"
-    }
+    },
+    "seeder": false
   }
 }
