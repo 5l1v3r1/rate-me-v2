@@ -1,28 +1,28 @@
 const Poll = require('../models/poll')
 
-function getPolls (args, next) {
+function getPolls (c, next) {
   Poll.find({}, '-__v', (err, polls) => {
     if (err) return next(err)
     return next(null, polls)
   })
 }
 
-function createPoll (args, next) {
+function createPoll (c, next) {
   Poll
     .create({
-      userId: args.userId,
-      rate: args.rate,
+      userId: c.args.userId,
+      rate: c.args.rate,
       completedAt: null,
       approved: null,
       votes: []
-    })
-    .catch(err => next(err))
-    .then(poll => {
+    }, (err, poll) => {
+      if (err) return next(err)
       return next(null, poll)
     })
 }
 
-function updatePoll (args, next) {
+function updatePoll (c, next) {
+  const args = c.args
   const updateKeys = ['approved', 'votes', 'status']
   Poll.findById(args.id)
     .catch(err => next(err))
@@ -41,8 +41,8 @@ function updatePoll (args, next) {
     })
 }
 
-function deletePoll (args, next) {
-  Poll.findByIdAndDelete(args.id)
+function deletePoll (c, next) {
+  Poll.findByIdAndDelete(c.args.id)
     .catch(err => next(err))
     .then(() => {
       next(null, true)

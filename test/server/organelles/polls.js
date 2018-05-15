@@ -6,13 +6,13 @@ const Poll = require('../../../server/models/poll')
 const PollsOrganelle = require('../../../server/organelles/polls')
 
 describe('organelles/polls', function () {
+  const ObjectId = mongoose.Types.ObjectId
+  const user1Id = ObjectId()
+  const user2Id = ObjectId()
+
   before(done => {
     test.startServer(err => {
       if (err) return done(err)
-      const ObjectId = mongoose.Types.ObjectId
-      const user1Id = ObjectId()
-      const user2Id = ObjectId()
-
       // insert test data
       async.series([
         next => {
@@ -72,8 +72,8 @@ describe('organelles/polls', function () {
   it('fetches all polls on "polls-list"', done => {
     const plasma = test.getPlasma()
     const dna = {}
-
     PollsOrganelle(plasma, dna)
+
     const chemical = {
       type: 'polls-list'
     }
@@ -84,6 +84,37 @@ describe('organelles/polls', function () {
       expect(polls[1].rate).to.eq(90)
 
       return done()
+    })
+  })
+
+  it('creates a poll with "polls-create"', done => {
+    const plasma = test.getPlasma()
+    const dna = {}
+    PollsOrganelle(plasma, dna)
+
+    const chemical = {
+      type: 'polls-create',
+      args: {
+        userId: user1Id,
+        rate: 75
+      }
+    }
+    plasma.emit(chemical, (err, poll) => {
+      expect(err).to.not.exist
+      expect(poll).to.exist
+      expect(poll.userId).to.eq(user1Id)
+      expect(poll.rate).to.eq(75)
+
+      Poll.find({}, (err, polls) => {
+        if (err) return done(err)
+
+        expect(polls.length).to.eq(3)
+        expect(polls[2].userId.toString()).to.eq(user1Id.toString())
+        expect(polls[2].rate).to.eq(75)
+        expect(polls[2].approved).to.eq(null)
+
+        return done()
+      })
     })
   })
 })
