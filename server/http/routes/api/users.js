@@ -23,12 +23,7 @@ module.exports = (plasma, dna, helpers) => {
     'GET /:userId': [
       auth.authorize(dna.jwtSecret),
       (req, res, next) => {
-        let userId = req.params.userId
-        if (userId === 'me') {
-          userId = req.user.id
-        }
-
-        plasma.emit({ type: 'users-get', userId: userId }, (err, user) => {
+        plasma.emit({ type: 'users-get', userId: req.params.userId }, (err, user) => {
           if (err) return next(err)
 
           res.status(200).send(user)

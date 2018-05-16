@@ -51,6 +51,11 @@ const auth = {
 
           req.user = user
 
+          // Allow `me` to be used in request params instead of `:userId`
+          if (req.params.userId && req.params.userId === 'me') {
+            req.params.userId = req.user.id
+          }
+
           return next(null, user)
         })
       })
