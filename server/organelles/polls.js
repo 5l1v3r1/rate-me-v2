@@ -31,7 +31,13 @@ function updatePoll (c, next) {
       const pollPatch = {}
       // pick values to patch
       updateKeys.forEach(key => {
-        if (key in args) pollPatch[key] = args[key]
+        if (key in args) {
+          const value = args[key]
+          const valueNotNullOrUndefined = value !== null && typeof value !== 'undefined'
+          if (valueNotNullOrUndefined) {
+            pollPatch[key] = args[key]
+          }
+        }
       })
       // fill up completed date if approved field is being set
       if ('approved' in args) {
