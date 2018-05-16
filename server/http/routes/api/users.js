@@ -74,6 +74,10 @@ module.exports = (plasma, dna, helpers) => {
             authToken: token
           })
       })
+    },
+
+    'POST /register': (req, res, next) => {
+      // TODO
     }
   }
 }
