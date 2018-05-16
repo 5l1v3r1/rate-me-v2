@@ -4,6 +4,8 @@ const User = require('../../../models/user')
 const auth = require('../middlewares/auth')
 
 module.exports = (plasma, dna, helpers) => {
+  let responseError = helpers['response-error']
+
   return {
     'GET': [
       auth.authorize(dna.jwtSecret),
@@ -40,11 +42,7 @@ module.exports = (plasma, dna, helpers) => {
       auth.authorize(dna.jwtSecret),
       (req, res, next) => {
         if (req.user.id !== req.params.userId) {
-          // todo: move error creating to helpers
-          let error = new Error()
-          error.code = 401
-          error.body = 'Unauthorized'
-          return next(error)
+          return next(responseError(401, 'Unauthorized'))
         }
 
         plasma.emit({ type: 'users-update', userId: req.params.userId, data: req.body }, (err, user) => {
@@ -59,39 +57,23 @@ module.exports = (plasma, dna, helpers) => {
 
     'POST /login': (req, res, next) => {
       if (!req.body.email) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Email is required'
-        return next(error)
+        return next(responseError(400, 'Email is required'))
       }
       if (!req.body.password) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Password is required'
-        return next(error)
+        return next(responseError(400, 'Password is required'))
       }
 
       User.findOne({ email: req.body.email }, (err, user) => {
         if (err) return next(err)
         if (!user) {
-          // todo: move error creating to helpers
-          let error = new Error()
-          error.code = 400
-          error.body = 'Email not registered'
-          return next(error)
+          return next(responseError(400, 'Email not registered'))
         }
 
         // validate password
         bcrypt.compare(req.body.password, user.password, (err, result) => {
           if (err) return next(err)
           if (!result) {
-            // todo: move error creating to helpers
-            let error = new Error()
-            error.code = 400
-            error.body = 'Incorrect password'
-            return next(error)
+            return next(responseError(400, 'Incorrect password'))
           }
 
           const token = auth.createToken(user, dna.jwtSecret)
@@ -107,32 +89,16 @@ module.exports = (plasma, dna, helpers) => {
 
     'POST /register': (req, res, next) => {
       if (!req.body.email) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Email is required'
-        return next(error)
+        return next(responseError(400, 'Email is required'))
       }
       if (!req.body.password) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Password is required'
-        return next(error)
+        return next(responseError(400, 'Password is required'))
       }
       if (!req.body.password_confirm) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Password confirm is required'
-        return next(error)
+        return next(responseError(400, 'Password confirm is required'))
       }
       if (req.body.password !== req.body.password_confirm) {
-        // todo: move error creating to helpers
-        let error = new Error()
-        error.code = 400
-        error.body = 'Passwords don\'t match'
-        return next(error)
+        return next(responseError(400, 'Passwords don\'t match'))
       }
 
       plasma.emit({ type: 'users-create', email: req.body.email, password: req.body.password }, (err, user) => {

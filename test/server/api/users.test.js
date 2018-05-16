@@ -206,6 +206,23 @@ describe('/api/users', function () {
     })
   })
 
+  it('does not login without a password', function (next) {
+    request({
+      uri: test.variables.apiendpoint + '/users/login',
+      method: 'POST',
+      body: {
+        email: 'test@test.test'
+      },
+      json: true
+    }, function (err, res, body) {
+      if (err) return next(err)
+
+      expect(res.statusCode, body).to.eq(400)
+      expect(body).to.eq('Password is required')
+      next()
+    })
+  })
+
   it('does not login with wrong email', function (next) {
     request({
       uri: test.variables.apiendpoint + '/users/login',
