@@ -18,19 +18,15 @@ module.exports = (plasma, dna, helpers) => {
       }
     ],
 
-    'GET /me': [
-      auth.authorize(dna.jwtSecret),
-      (req, res, next) => {
-        return res
-          .status(200)
-          .send(req.user.toObject())
-      }
-    ],
-
     'GET /:userId': [
       auth.authorize(dna.jwtSecret),
       (req, res, next) => {
-        plasma.emit({ type: 'users-get', userId: req.params.userId }, (err, user) => {
+        let userId = req.params.userId
+        if (userId === 'me') {
+          userId = req.user.id
+        }
+
+        plasma.emit({ type: 'users-get', userId: userId }, (err, user) => {
           if (err) return next(err)
 
           res.status(200).send(user)

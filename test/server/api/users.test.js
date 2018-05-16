@@ -49,6 +49,28 @@ describe('/api/users', function () {
     })
   })
 
+  it('GETs valid user data using "me" in url', function (next) {
+    // mock organelle response
+    test.variables.cell.plasma.on('users-get', (args, next) => {
+      expect(args.userId).to.eq(this.user.id)
+
+      return next(null, 'test-response')
+    })
+
+    request({
+      uri: test.variables.apiendpoint + '/users/me',
+      method: 'GET',
+      headers: {
+        authorization: this.authToken
+      }
+    }, function (err, res, body) {
+      if (err) return next(err)
+      expect(res.statusCode).to.eq(200)
+      expect(body).to.eq('test-response')
+      next()
+    })
+  })
+
   it('PUTs user data', function (next) {
     let newUserData = {
       firstname: 'George',
