@@ -1,9 +1,11 @@
+const mongoose = require('mongoose')
+
 const User = require('../../../server/models/user')
 const Plasma = require('organic-plasma')
 const UsersOrganelle = require('../../../server/organelles/users')
 
 describe('organelles/users', function () {
-  before(function (next) {
+  beforeEach(function (next) {
     test.startServer(err => {
       if (err) return next(err)
 
@@ -17,6 +19,9 @@ describe('organelles/users', function () {
 
       this.user = user
     })
+  })
+  afterEach(function (next) {
+    mongoose.connection.db.dropDatabase(() => test.stopServer(next))
   })
 
   it('fetches a single user on users-get', function (next) {
@@ -59,6 +64,29 @@ describe('organelles/users', function () {
       })
 
       return next()
+    })
+  })
+
+  it('creates a new user on users-create', function (next) {
+    let plasma = require('organic-plasma-feedback')(new Plasma())
+    let dna = {}
+    let chemical = {
+      type: 'users-create',
+      email: 'test-new-user@test.test',
+      password: '123456',
+    }
+
+    UsersOrganelle(plasma, dna)
+    plasma.emit(chemical, (err, res) => {
+      if (err) return next(err)
+
+      User.findOne({ email: 'test-new-user@test.test' }, (err, user) => {
+        if (err) return next(err)
+
+        expect(user).to.exist
+
+        return next()
+      })
     })
   })
 })

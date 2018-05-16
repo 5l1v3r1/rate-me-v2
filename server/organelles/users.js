@@ -50,7 +50,18 @@ function updateUser (args, next) {
   })
 }
 
+function createUser (args, next) {
+  if (!args.email) return next(new Error('missing email'))
+  if (!args.password) return next(new Error('missing password'))
+
+  let user = new User()
+  user.email = args.email
+  user.password = args.password
+  user.save(next)
+}
+
 module.exports = function Users (plasma, dna) {
   plasma.on('users-get', getUser, this)
   plasma.on('users-update', updateUser, this)
+  plasma.on('users-create', createUser, this)
 }
