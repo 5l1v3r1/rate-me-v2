@@ -50,6 +50,15 @@ function updateUser (args, next) {
   })
 }
 
+/**
+ * Creates a new user with the email/password
+ * Note: Password is plaintext here and hashed after user is saved
+ * args: `{ email: String, password: String }`
+ *
+ * @param args
+ * @param next
+ * @returns {*}
+ */
 function createUser (args, next) {
   if (!args.email) return next(new Error('missing email'))
   if (!args.password) return next(new Error('missing password'))
