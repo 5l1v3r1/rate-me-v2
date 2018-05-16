@@ -93,7 +93,7 @@ describe('/api/version', function () {
       if (err) return next(err)
       // mock organelle response
       test.variables.cell.plasma.on('users-update', (args, next) => {
-        expect(args.userId, 'topic [userId]').to.eq(this.user.id)
+        expect(args.userId).to.eq(this.user.id)
         expect(args.data).to.deep.eq(newUserData)
 
         return next()
@@ -112,6 +112,37 @@ describe('/api/version', function () {
         expect(res.statusCode, body).to.eq(401)
         next()
       })
+    })
+  })
+
+  it('registers new users', function (next) {
+    let newUserData = {
+      email: 'test@test.test',
+      password: '123456',
+      password_confirm: '123456'
+    }
+
+    test.variables.cell.plasma.on('users-create', (args, next) => {
+      expect(args.email).to.eq('test@test.test')
+      expect(args.password).to.eq('123456')
+      expect(args.password_confirm).to.not.exist
+
+      // we rely on the fact that this user is already created here
+      return next(null, this.user)
+    })
+
+    request({
+      uri: test.variables.apiendpoint + '/users/register',
+      method: 'POST',
+      body: newUserData,
+      json: true
+    }, function (err, res, body) {
+      if (err) return next(err)
+
+      expect(res.statusCode, body).to.eq(200)
+      expect(body).to.exist
+      expect(body.authToken).to.exist
+      next()
     })
   })
 })

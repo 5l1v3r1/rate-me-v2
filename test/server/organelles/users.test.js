@@ -78,13 +78,16 @@ describe('organelles/users', function () {
     }
 
     UsersOrganelle(plasma, dna)
-    plasma.emit(chemical, (err, res) => {
+    plasma.emit(chemical, (err, response) => {
       if (err) return next(err)
+      expect(response).to.exist
+      expect(response.email).to.eq('test-new-user@test.test')
 
       User.findOne({ email: 'test-new-user@test.test' }, (err, user) => {
         if (err) return next(err)
 
         expect(user).to.exist
+        expect(user.id).to.eq(response.id)
 
         return next()
       })

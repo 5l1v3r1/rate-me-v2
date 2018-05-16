@@ -77,7 +77,46 @@ module.exports = (plasma, dna, helpers) => {
     },
 
     'POST /register': (req, res, next) => {
-      // TODO
+      if (!req.body.email) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Missing email'
+        return next(error)
+      }
+      if (!req.body.password) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Password is required'
+        return next(error)
+      }
+      if (!req.body.password_confirm) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Password confirm is required'
+        return next(error)
+      }
+      if (req.body.password !== req.body.password_confirm) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Passwords don\'t match'
+        return next(error)
+      }
+
+      plasma.emit({ type: 'users-create', email: req.body.email, password: req.body.password }, (err, user) => {
+        if (err) return next(err)
+
+        const token = auth.createToken(user, dna.jwtSecret)
+        res.status(200)
+          .send({
+            authToken: token
+          })
+
+        return next()
+      })
     }
   }
 }
