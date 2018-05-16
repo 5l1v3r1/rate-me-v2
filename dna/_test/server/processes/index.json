@@ -1,4 +1,13 @@
 {
+  "plasma": {
+    "organic-express-static": {
+      "log": true
+    },
+    "organic-api-routes": {
+      "log": true,
+      "jwtSecret": "test-jwt-secret"
+    }
+  },
   "membrane": {
     "organic-express-server": {
       "port": 13371,

@@ -11,8 +11,8 @@ function getPolls (c, next) {
 function createPoll (c, next) {
   Poll
     .create({
-      userId: c.args.userId,
-      rate: c.args.rate,
+      userId: c.userId,
+      rate: c.rate,
       completedAt: null,
       approved: null,
       votes: []
@@ -24,24 +24,29 @@ function createPoll (c, next) {
 }
 
 function updatePoll (c, next) {
-  const args = c.args
   const updateKeys = ['approved', 'votes', 'status']
-  Poll.findById(args.id)
+  Poll.findById(c.id)
     .then(poll => {
+      if (!poll) {
+        next(new Error('Poll with id ' + c.id + ' not found.'))
+      }
       const pollPatch = {}
       // pick values to patch
       updateKeys.forEach(key => {
-        if (key in args) {
-          const value = args[key]
+        if (key in c) {
+          const value = c[key]
           const valueNotNullOrUndefined = value !== null && typeof value !== 'undefined'
           if (valueNotNullOrUndefined) {
-            pollPatch[key] = args[key]
+            pollPatch[key] = c[key]
           }
         }
       })
       // fill up completed date if approved field is being set
-      if ('approved' in args) {
-        pollPatch['completedAt'] = Date.now()
+      if ('approved' in c) {
+        const valueNotNullOrUndefined = c['approved'] !== null && typeof c['approved'] !== 'undefined'
+        if (valueNotNullOrUndefined) {
+          pollPatch['completedAt'] = Date.now()
+        }
       }
       Object.assign(poll, pollPatch)
       poll.save()
@@ -52,7 +57,7 @@ function updatePoll (c, next) {
 }
 
 function deletePoll (c, next) {
-  Poll.findByIdAndDelete(c.args.id)
+  Poll.findByIdAndDelete(c.id)
     .then(() => {
       next(null, true)
     })

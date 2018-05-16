@@ -96,10 +96,8 @@ describe('organelles/polls', function () {
 
     const chemical = {
       type: 'polls-create',
-      args: {
-        userId: user1Id,
-        rate: 75
-      }
+      userId: user1Id,
+      rate: 75
     }
     plasma.emit(chemical, (err, poll) => {
       expect(err).to.not.exist
@@ -128,14 +126,12 @@ describe('organelles/polls', function () {
     // set votes
     const votesChemical = {
       type: 'polls-update',
-      args: {
-        id: pollId,
-        votes: [{
-          userId: user2Id,
-          reason: 'last month raise',
-          approved: 0
-        }]
-      }
+      id: pollId,
+      votes: [{
+        userId: user2Id,
+        reason: 'last month raise',
+        approved: 0
+      }]
     }
     plasma.emit(votesChemical, (err, poll) => {
       expect(err).to.not.exist
@@ -145,11 +141,9 @@ describe('organelles/polls', function () {
       // set status
       const statusChemical = {
         type: 'polls-update',
-        args: {
-          id: pollId,
-          approved: false,
-          status: Poll.proposalStatuses[1]
-        }
+        id: pollId,
+        approved: false,
+        status: Poll.proposalStatuses[1]
       }
       plasma.emit(statusChemical, (err, poll) => {
         expect(err).to.not.exist
@@ -181,9 +175,7 @@ describe('organelles/polls', function () {
 
     const chemical = {
       type: 'polls-delete',
-      args: {
-        id: pollId
-      }
+      id: pollId
     }
     plasma.emit(chemical, (err, poll) => {
       expect(err).to.not.exist

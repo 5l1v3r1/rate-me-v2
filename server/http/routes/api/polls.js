@@ -34,10 +34,8 @@ module.exports = (plasma, dna, helpers) => {
 
         const createChemical = {
           type: 'polls-create',
-          args: {
-            userId: req.user.id,
-            rate: req.body.rate
-          }
+          userId: req.user.id,
+          rate: req.body.rate
         }
         plasma.emit(createChemical, (err, poll) => {
           if (err) return next(err)
@@ -63,10 +61,11 @@ module.exports = (plasma, dna, helpers) => {
             if (!poll) {
               return next(responseError(404, 'Poll not found.'))
             }
-            if (poll.user.id === req.user.id) {
+
+            if (poll.userId === req.user.id) {
               // user should not be able to add votes to himself
               if (req.params.votes) {
-                return next(responseError(400, 'Tou can\'t add votes to your poll.'))
+                return next(responseError(400, 'You can\'t add votes to your poll.'))
               }
             } else {
               // other users should not be able to approve or change the status
@@ -82,12 +81,10 @@ module.exports = (plasma, dna, helpers) => {
             // if approved status changes, put completedAt value as well
             const updateChemical = {
               type: 'polls-update',
-              args: {
-                id: req.params.id,
-                approved: req.body.approved,
-                votes: req.body.votes,
-                status: req.body.status
-              }
+              id: req.params.id,
+              approved: req.body.approved,
+              votes: req.body.votes,
+              status: req.body.status
             }
             plasma.emit(updateChemical, (err, updatedPoll) => {
               if (err) return next(err)
@@ -113,9 +110,7 @@ module.exports = (plasma, dna, helpers) => {
 
             const deleteChemical = {
               type: 'polls-delete',
-              args: {
-                id: req.params.id
-              }
+              id: req.params.id
             }
             plasma.emit(deleteChemical, (err, success) => {
               if (err) return next(err)
