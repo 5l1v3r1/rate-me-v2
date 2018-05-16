@@ -5,19 +5,7 @@ const bcrypt = require('bcrypt')
 
 describe('models/users', function () {
   beforeEach(function (next) {
-    test.startServer(err => {
-      if (err) return next(err)
-
-      let user = new User()
-      user.email = 'test@test.test'
-      user.password = '12345'
-      user.firstname = 'Testfn'
-      user.lastname = 'Testln'
-      user.rate = 999999.69
-      user.save(next)
-
-      this.user = user
-    })
+    test.startServer(next)
   })
 
   afterEach(function (next) {
