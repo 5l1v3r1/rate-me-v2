@@ -1,9 +1,11 @@
 const User = require('../../../server/models/user')
+const mongoose = require('mongoose')
+
 const request = require('request')
 const auth = require('../../../server/http/routes/middlewares/auth')
 
 describe('/api/version', function () {
-  before(function (next) {
+  beforeEach(function (next) {
     test.startServer(err => {
       if (err) return next(err)
 
@@ -19,7 +21,10 @@ describe('/api/version', function () {
       this.authToken = auth.createToken(user, 'test-jwt-secret')
     })
   })
-  after(test.stopServer)
+
+  afterEach(function (next) {
+    mongoose.connection.db.dropDatabase(() => test.stopServer(next))
+  })
 
   it('GETs valid user data', function (next) {
     // mock organelle response

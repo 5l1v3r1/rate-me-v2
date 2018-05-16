@@ -15,11 +15,11 @@ describe('organelles/users', function () {
       user.firstname = 'Testfn'
       user.lastname = 'Testln'
       user.rate = 999999.69
-      user.save(next)
-
       this.user = user
+      user.save(next)
     })
   })
+
   afterEach(function (next) {
     mongoose.connection.db.dropDatabase(() => test.stopServer(next))
   })
@@ -55,15 +55,16 @@ describe('organelles/users', function () {
     plasma.emit({ type: 'users-update', userId: this.user.id, data: data }, (err, res) => {
       if (err) return next(err)
 
-      User.findOne({ id: this.user.id }, (err, user) => {
+      User.findOne({ _id: this.user.id }, (err, user) => {
         if (err) return next(err)
 
+        expect(user).to.exist
         expect(user.firstname).to.eq('George')
         expect(user.lastname).to.eq('Restful')
         expect(user.rate).to.eq(20)
-      })
 
-      return next()
+        return next()
+      })
     })
   })
 
