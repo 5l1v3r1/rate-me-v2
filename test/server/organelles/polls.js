@@ -11,7 +11,7 @@ describe('organelles/polls', function () {
   const user2Id = ObjectId()
   const pollId = ObjectId()
 
-  before(done => {
+  beforeEach(done => {
     test.startServer(err => {
       if (err) return done(err)
       // insert test data
@@ -62,7 +62,7 @@ describe('organelles/polls', function () {
     })
   })
 
-  after(done => {
+  afterEach(done => {
     async.series([
       next => {
         mongoose.connection.db.dropDatabase(next)
@@ -192,10 +192,8 @@ describe('organelles/polls', function () {
         if (err) return done(err)
 
         // first added poll should be deleted
-        expect(polls.length).to.eq(2)
+        expect(polls.length).to.eq(1)
         expect(polls[0].rate).to.eq(90)
-        // added in creates a poll with "polls-create"
-        expect(polls[1].rate).to.eq(75)
 
         return done()
       })
