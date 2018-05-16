@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt')
+
 const User = require('../../../models/user')
 const auth = require('../middlewares/auth')
 
@@ -60,19 +62,50 @@ module.exports = (plasma, dna, helpers) => {
     ],
 
     'POST /login': (req, res, next) => {
-      // TODO: real authentication
-      const seedUserEmail = 'aivo@devlabs.bg'
+      if (!req.body.email) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Email is required'
+        return next(error)
+      }
+      if (!req.body.password) {
+        // todo: move error creating to helpers
+        let error = new Error()
+        error.code = 400
+        error.body = 'Password is required'
+        return next(error)
+      }
 
-      User.findOne({ email: seedUserEmail }, (err, user) => {
+      User.findOne({ email: req.body.email }, (err, user) => {
         if (err) return next(err)
+        if (!user) {
+          // todo: move error creating to helpers
+          let error = new Error()
+          error.code = 400
+          error.body = 'Email not registered'
+          return next(error)
+        }
 
-        const token = auth.createToken(user, dna.jwtSecret)
+        // validate password
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+          if (err) return next(err)
+          if (!result) {
+            // todo: move error creating to helpers
+            let error = new Error()
+            error.code = 400
+            error.body = 'Incorrect password'
+            return next(error)
+          }
 
-        return res
-          .status(200)
-          .send({
-            authToken: token
-          })
+          const token = auth.createToken(user, dna.jwtSecret)
+
+          return res
+            .status(200)
+            .send({
+              authToken: token
+            })
+        })
       })
     },
 
@@ -81,7 +114,7 @@ module.exports = (plasma, dna, helpers) => {
         // todo: move error creating to helpers
         let error = new Error()
         error.code = 400
-        error.body = 'Missing email'
+        error.body = 'Email is required'
         return next(error)
       }
       if (!req.body.password) {

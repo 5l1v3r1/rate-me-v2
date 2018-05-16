@@ -4,7 +4,7 @@ const mongoose = require('mongoose')
 const request = require('request')
 const auth = require('../../../server/http/routes/middlewares/auth')
 
-describe('/api/version', function () {
+describe('/api/users', function () {
   beforeEach(function (next) {
     test.startServer(err => {
       if (err) return next(err)
@@ -15,10 +15,11 @@ describe('/api/version', function () {
       user.firstname = 'Testfn'
       user.lastname = 'Testln'
       user.rate = 999999.69
-      user.save(next)
 
       this.user = user
       this.authToken = auth.createToken(user, 'test-jwt-secret')
+
+      user.save(next)
     })
   })
 
@@ -118,13 +119,13 @@ describe('/api/version', function () {
   it('registers new users', function (next) {
     let newUserData = {
       email: 'test@test.test',
-      password: '123456',
-      password_confirm: '123456'
+      password: '12345',
+      password_confirm: '12345'
     }
 
     test.variables.cell.plasma.on('users-create', (args, next) => {
       expect(args.email).to.eq('test@test.test')
-      expect(args.password).to.eq('123456')
+      expect(args.password).to.eq('12345')
       expect(args.password_confirm).to.not.exist
 
       // we rely on the fact that this user is already created here
@@ -142,6 +143,61 @@ describe('/api/version', function () {
       expect(res.statusCode, body).to.eq(200)
       expect(body).to.exist
       expect(body.authToken).to.exist
+      next()
+    })
+  })
+
+  it('logins existing users', function (next) {
+    request({
+      uri: test.variables.apiendpoint + '/users/login',
+      method: 'POST',
+      body: {
+        email: 'test@test.test',
+        password: '12345'
+      },
+      json: true
+    }, function (err, res, body) {
+      if (err) return next(err)
+
+      expect(res.statusCode, body).to.eq(200)
+      expect(body).to.exist
+      expect(body.authToken).to.exist
+      next()
+    })
+  })
+
+  it('does not login with wrong password', function (next) {
+    request({
+      uri: test.variables.apiendpoint + '/users/login',
+      method: 'POST',
+      body: {
+        email: 'test@test.test',
+        password: 'i-am-wrong'
+      },
+      json: true
+    }, function (err, res, body) {
+      if (err) return next(err)
+
+      expect(res.statusCode, body).to.eq(400)
+      expect(body).to.eq('Incorrect password')
+      next()
+    })
+  })
+
+  it('does not login with wrong email', function (next) {
+    request({
+      uri: test.variables.apiendpoint + '/users/login',
+      method: 'POST',
+      body: {
+        email: 'i-am-not-registered@test.test',
+        password: '12345'
+      },
+      json: true
+    }, function (err, res, body) {
+      if (err) return next(err)
+
+      expect(res.statusCode, body).to.eq(400)
+      expect(body).to.eq('Email not registered')
       next()
     })
   })
