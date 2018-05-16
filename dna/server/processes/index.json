@@ -67,6 +67,9 @@
     "seeder": {
       "source": "./server/organelles/seeder.js",
       "reactOn": "Mongoose"
+    },
+    "polls": {
+      "source": "./server/organelles/polls.js"
     }
   }
 }
