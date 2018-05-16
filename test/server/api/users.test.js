@@ -71,4 +71,42 @@ describe('/api/version', function () {
       next()
     })
   })
+
+  it('PUTs only own user data', function (next) {
+    let newUserData = {
+      firstname: 'George',
+      lastname: 'Restful'
+    }
+
+    let otherUser = new User()
+    otherUser.email = 'test2@test.test'
+    otherUser.password = '12345'
+    otherUser.firstname = 'Testfn2'
+    otherUser.lastname = 'Testln2'
+    otherUser.rate = 9.69
+    otherUser.save(err => {
+      if (err) return next(err)
+      // mock organelle response
+      test.variables.cell.plasma.on('users-update', (args, next) => {
+        expect(args.userId, 'topic [userId]').to.eq(this.user.id)
+        expect(args.data).to.deep.eq(newUserData)
+
+        return next()
+      })
+
+      request({
+        uri: test.variables.apiendpoint + '/users/' + otherUser.id,
+        method: 'PUT',
+        body: newUserData,
+        json: true,
+        headers: {
+          authorization: this.authToken
+        }
+      }, function (err, res, body) {
+        if (err) return next(err)
+        expect(res.statusCode, body).to.eq(401)
+        next()
+      })
+    })
+  })
 })

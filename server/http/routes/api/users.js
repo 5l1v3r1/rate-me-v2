@@ -41,6 +41,14 @@ module.exports = (plasma, dna, helpers) => {
     'PUT /:userId': [
       auth.authorize(dna.jwtSecret),
       (req, res, next) => {
+        if (req.user.id !== req.params.userId) {
+          // todo: move error creating to helpers
+          let error = new Error()
+          error.code = 401
+          error.body = 'Unauthorized'
+          return next(error)
+        }
+
         plasma.emit({ type: 'users-update', userId: req.params.userId, data: req.body }, (err, user) => {
           if (err) return next(err)
 
