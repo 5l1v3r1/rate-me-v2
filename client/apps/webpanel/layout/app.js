@@ -2,6 +2,7 @@ const oval = require('organic-oval')
 oval.init()
 
 require('../landing/landing-view')
+require('../components/poll-form.tag')
 
 class App {
   constructor(rootEl, props, attrs) {
@@ -13,6 +14,8 @@ class App {
       <div>
         <h1>Layout</h1>
         <landing-view></landing-view>
+
+        <poll-form></poll-form>
       </div>
     )
   }
