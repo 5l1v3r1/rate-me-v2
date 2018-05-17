@@ -74,7 +74,7 @@ module.exports = (plasma, dna, helpers) => {
               }
             }
             // no votes adding after poll is completed
-            if (poll.approved && req.body.votes) {
+            if (poll.approved !== null && req.body.votes) {
               return next(responseError(400, 'Votes can\'t be added on approved polls.'))
             }
 
