@@ -2,6 +2,7 @@ const oval = require('organic-oval')
 oval.init()
 
 require('../landing/landing-view.tag')
+require('../components/login-form.tag')
 require('../components/poll-form.tag')
 require('../components/polls-view.tag')
 const api = new (require('../api')).Api()
@@ -19,6 +20,7 @@ class App {
         <h1>Layout</h1>
         <landing-view></landing-view>
 
+        <login-form></login-form>
         <poll-form></poll-form>
 
         <polls-view prop-polls={this.polls}></polls-view>

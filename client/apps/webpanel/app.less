@@ -1,0 +1,50 @@
+// html element, seleted with higher specificity
+:root {
+  --color-primary: #FF5D2A;
+  --color-primary-light: #FFB086;
+}
+
+html {
+  box-sizing: border-box;
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+
+.c-input {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 0;
+
+  &__label {
+    color: var(--color-primary);
+    padding-bottom: 0.5rem;
+  }
+
+  &__field {
+    padding: 0.5rem;
+    outline: none;
+
+    &:focus {
+      background-color: var(--color-primary-light);
+    }
+  }
+
+  &__error {
+    font-size: 1.4rem;
+    color: #ff0000;
+    padding-top: 0.3rem;
+  }
+}
+
+.c-btn {
+  padding: 0.5rem 1rem;
+  border: 0;
+  background-color: var(--color-primary);
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
