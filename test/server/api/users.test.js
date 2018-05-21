@@ -6,7 +6,8 @@ const auth = require('../../../server/http/routes/middlewares/auth')
 
 describe('/api/users', function () {
   beforeEach(function (next) {
-    test.startServer(err => {
+    // starts `organic-mongoose` to create a user for authentication and all express API organelles
+    test.startServer(['organic-mongoose', 'organic-api-routes', 'organic-express-server', 'organic-express-response'], err => {
       if (err) return next(err)
 
       let user = new User()

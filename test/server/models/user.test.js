@@ -5,7 +5,14 @@ const bcrypt = require('bcrypt')
 
 describe('models/users', function () {
   beforeEach(function (next) {
-    test.startServer(next)
+    test.startServer({
+      'organic-mongoose': {},
+      // this overrides `readyChemcals` for `startServer`; can be improved by adding
+      // the option to overwrite it without spawning the express-server organelle
+      'organic-express-server': {
+        'expressSetupDoneOnce': 'Mongoose'
+      }
+    }, next)
   })
 
   afterEach(function (next) {

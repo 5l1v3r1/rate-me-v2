@@ -118,16 +118,17 @@ test.startServer = function (allowedOrganelles, next) {
 
   test.initTestEnv(function (err) {
     if (err) return next(err)
+
+    if (allowedOrganelles) {
+      test.variables.dna = removeNotAllowedOrganelles(test.variables.dna, allowedOrganelles)
+    }
+
     var cell = variables.cell = new (require('../../server/cell'))()
     var readyChemcals = _.get(test.variables, 'dna.server.processes.index.membrane.organic-express-server.expressSetupDoneOnce', ['ApiRoutesReady'])
     cell.plasma.on(readyChemcals, function (err) {
       if (err instanceof Error) return next(err)
       next && next()
     })
-
-    if (allowedOrganelles) {
-      test.variables.dna = removeNotAllowedOrganelles(test.variables.dna, allowedOrganelles)
-    }
 
     cell.start(test.variables.dna, function (err) {
       if (err) throw err

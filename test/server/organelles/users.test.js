@@ -6,7 +6,13 @@ const UsersOrganelle = require('../../../server/organelles/users')
 
 describe('organelles/users', function () {
   beforeEach(function (next) {
-    test.startServer(err => {
+    test.startServer({
+      'organic-mongoose': {},
+      'organic-express-server': {
+        'expressSetupDoneOnce': 'Mongoose'
+      },
+      'users': {} // spawns the tested `users` organelle for all tests
+    }, err => {
       if (err) return next(err)
 
       let user = new User()
@@ -25,11 +31,7 @@ describe('organelles/users', function () {
   })
 
   it('fetches a single user on users-get', function (next) {
-    let plasma = require('organic-plasma-feedback')(new Plasma())
-    let dna = {}
-
-    UsersOrganelle(plasma, dna)
-    plasma.emit({ type: 'users-get', userId: this.user.id }, (err, res) => {
+    test.variables.cell.plasma.emit({ type: 'users-get', userId: this.user.id }, (err, res) => {
       if (err) return next(err)
 
       expect(res.email).to.eq('test@test.test')
@@ -43,16 +45,13 @@ describe('organelles/users', function () {
   })
 
   it('updates a single user on users-update', function (next) {
-    let plasma = require('organic-plasma-feedback')(new Plasma())
-    let dna = {}
     let data = {
       firstname: 'George',
       lastname: 'Restful',
       rate: 20
     }
 
-    UsersOrganelle(plasma, dna)
-    plasma.emit({ type: 'users-update', userId: this.user.id, data: data }, (err, res) => {
+    test.variables.cell.plasma.emit({ type: 'users-update', userId: this.user.id, data: data }, (err, res) => {
       if (err) return next(err)
 
       User.findOne({ _id: this.user.id }, (err, user) => {
@@ -69,16 +68,13 @@ describe('organelles/users', function () {
   })
 
   it('creates a new user on users-create', function (next) {
-    let plasma = require('organic-plasma-feedback')(new Plasma())
-    let dna = {}
     let chemical = {
       type: 'users-create',
       email: 'test-new-user@test.test',
       password: '123456',
     }
 
-    UsersOrganelle(plasma, dna)
-    plasma.emit(chemical, (err, response) => {
+    test.variables.cell.plasma.emit(chemical, (err, response) => {
       if (err) return next(err)
       expect(response).to.exist
       expect(response.email).to.eq('test-new-user@test.test')
