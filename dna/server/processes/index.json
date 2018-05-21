@@ -32,6 +32,9 @@
     },
     "users": {
       "source": "./server/organelles/users.js"
+    },
+    "polls": {
+      "source": "./server/organelles/polls.js"
     }
   },
   "membrane": {

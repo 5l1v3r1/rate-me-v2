@@ -3,10 +3,11 @@
  */
 process.env.CELL_MODE = process.env.CELL_MODE || '_test'
 
-var path = require('path')
-var chai = require('chai')
-var _ = require('lodash')
-var foldAndMerge = require('organic-dna-fold')
+const path = require('path')
+const chai = require('chai')
+const _ = require('lodash')
+const mongoose = require('mongoose')
+const foldAndMerge = require('organic-dna-fold')
 
 global.expect = chai.expect
 
@@ -127,7 +128,7 @@ test.startServer = function (allowedOrganelles, next) {
     var readyChemcals = _.get(test.variables, 'dna.server.processes.index.membrane.organic-express-server.expressSetupDoneOnce', ['ApiRoutesReady'])
     cell.plasma.on(readyChemcals, function (err) {
       if (err instanceof Error) return next(err)
-      next && next()
+      return next && next()
     })
 
     cell.start(test.variables.dna, function (err) {
@@ -145,4 +146,23 @@ test.startServer = function (allowedOrganelles, next) {
 
 test.stopServer = function (next) {
   variables.cell.plasma.emit('kill', next)
+}
+
+test.getPlasma = function () {
+  const Plasma = require('organic-plasma')
+  return require('organic-plasma-feedback')(new Plasma())
+}
+
+test.dropDatabase = done => {
+  if (mongoose.connection.readyState) {
+    mongoose.connection.db.dropDatabase(() => {
+      mongoose.disconnect(err => {
+        if (err) return done(err)
+
+        return mongoose.connection.once('disconnected', done)
+      })
+    })
+  } else {
+    done(new Error('Connection already closed'))
+  }
 }
