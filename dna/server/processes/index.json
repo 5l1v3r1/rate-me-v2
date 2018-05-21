@@ -25,6 +25,16 @@
       "st": {
         "index": "index.html"
       }
+    },
+    "seeder": {
+      "source": "./server/organelles/seeder.js",
+      "reactOn": "Mongoose"
+    },
+    "users": {
+      "source": "./server/organelles/users.js"
+    },
+    "polls": {
+      "source": "./server/organelles/polls.js"
     }
   },
   "membrane": {
@@ -63,13 +73,6 @@
     "organic-mongoose": {
       "source": "organic-mongoose",
       "database": "@server.database"
-    },
-    "seeder": {
-      "source": "./server/organelles/seeder.js",
-      "reactOn": "Mongoose"
-    },
-    "polls": {
-      "source": "./server/organelles/polls.js"
     }
   }
 }

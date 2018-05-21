@@ -1,7 +1,9 @@
 var request = require('request')
 
 describe('/api/version', function () {
-  before(test.startServer)
+  before((next) => {
+    test.startServer(['organic-api-routes', 'organic-express-server', 'organic-express-response'], next)
+  })
   after(test.stopServer)
 
   it('GET', function (next) {

@@ -8,8 +8,8 @@
     "expect": true,
     "it": true,
     "before": true,
-    "beforeEach": true,
     "after": true,
+    "beforeEach": true,
     "afterEach": true,
     "test": true
   }
