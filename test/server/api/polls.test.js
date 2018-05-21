@@ -8,7 +8,7 @@ const auth = require('../../../server/http/routes/middlewares/auth')
 
 describe('/api/polls', function () {
   beforeEach(done => {
-    test.startServer(err => {
+    test.startServer(['organic-mongoose', 'organic-api-routes', 'organic-express-server', 'organic-express-response'], err => {
       if (err) return done(err)
 
       User.create({

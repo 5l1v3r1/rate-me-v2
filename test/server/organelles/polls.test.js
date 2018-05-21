@@ -3,7 +3,6 @@ const mongoose = require('mongoose')
 
 const User = require('../../../server/models/user')
 const Poll = require('../../../server/models/poll')
-const PollsOrganelle = require('../../../server/organelles/polls')
 
 describe('organelles/polls', function () {
   const ObjectId = mongoose.Types.ObjectId
@@ -12,7 +11,13 @@ describe('organelles/polls', function () {
   const pollId = ObjectId()
 
   beforeEach(done => {
-    test.startServer(err => {
+    test.startServer({
+      'organic-mongoose': {},
+      'organic-express-server': {
+        'expressSetupDoneOnce': 'Mongoose'
+      },
+      'polls': {} // spawns the tested `polls` organelle for all tests
+    }, err => {
       if (err) return done(err)
       // insert test data
       async.series([
@@ -72,14 +77,10 @@ describe('organelles/polls', function () {
   })
 
   it('fetches all polls on "polls-list"', done => {
-    const plasma = test.getPlasma()
-    const dna = {}
-    PollsOrganelle(plasma, dna)
-
     const chemical = {
       type: 'polls-list'
     }
-    plasma.emit(chemical, (err, polls) => {
+    test.variables.cell.plasma.emit(chemical, (err, polls) => {
       expect(err).to.not.exist
       expect(polls.length).to.eq(2)
       expect(polls[0].rate).to.eq(60)
@@ -90,16 +91,12 @@ describe('organelles/polls', function () {
   })
 
   it('creates a poll with "polls-create"', done => {
-    const plasma = test.getPlasma()
-    const dna = {}
-    PollsOrganelle(plasma, dna)
-
     const chemical = {
       type: 'polls-create',
       userId: user1Id,
       rate: 75
     }
-    plasma.emit(chemical, (err, poll) => {
+    test.variables.cell.plasma.emit(chemical, (err, poll) => {
       expect(err).to.not.exist
       expect(poll).to.exist
       expect(poll.userId).to.eq(user1Id)
@@ -119,10 +116,6 @@ describe('organelles/polls', function () {
   })
 
   it('updates a poll with "polls-update"', done => {
-    const plasma = test.getPlasma()
-    const dna = {}
-    PollsOrganelle(plasma, dna)
-
     // set votes
     const votesChemical = {
       type: 'polls-update',
@@ -133,7 +126,7 @@ describe('organelles/polls', function () {
         approved: 0
       }]
     }
-    plasma.emit(votesChemical, (err, poll) => {
+    test.variables.cell.plasma.emit(votesChemical, (err, poll) => {
       expect(err).to.not.exist
       expect(poll).to.exist
       expect(poll.votes.length).to.eq(1)
@@ -145,7 +138,7 @@ describe('organelles/polls', function () {
         approved: false,
         status: Poll.proposalStatuses[1]
       }
-      plasma.emit(statusChemical, (err, poll) => {
+      test.variables.cell.plasma.emit(statusChemical, (err, poll) => {
         expect(err).to.not.exist
         expect(poll).to.exist
         expect(poll.approved).to.eq(false)
@@ -169,15 +162,11 @@ describe('organelles/polls', function () {
   })
 
   it('deletes with "polls-delete"', done => {
-    const plasma = test.getPlasma()
-    const dna = {}
-    PollsOrganelle(plasma, dna)
-
     const chemical = {
       type: 'polls-delete',
       id: pollId
     }
-    plasma.emit(chemical, (err, poll) => {
+    test.variables.cell.plasma.emit(chemical, (err, poll) => {
       expect(err).to.not.exist
 
       Poll.find({}, (err, polls) => {

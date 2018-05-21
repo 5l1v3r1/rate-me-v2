@@ -1,8 +1,6 @@
 const mongoose = require('mongoose')
 
 const User = require('../../../server/models/user')
-const Plasma = require('organic-plasma')
-const UsersOrganelle = require('../../../server/organelles/users')
 
 describe('organelles/users', function () {
   beforeEach(function (next) {
