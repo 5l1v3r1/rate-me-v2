@@ -28,7 +28,7 @@
         },
         body: JSON.stringify(payload)
       })
-      .then(res => console.error(res))
+      .catch(err => console.error(err))
     }
   </script>
   <form onsubmit={tag.onFormSubmit}>
