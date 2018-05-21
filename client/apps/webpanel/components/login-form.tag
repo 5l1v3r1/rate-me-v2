@@ -1,4 +1,5 @@
 <login-form>
+  <link rel="stylesheet" type="text/css" href="webpanel/components/login-form.css"/>
   <script>
     const authToken = '123' // TODO
 
@@ -26,9 +27,10 @@
         },
         body: JSON.stringify(tag.form)
       })
+      .catch(err => console.error(err))
       .then(res => {
         if (!res.ok) {
-          return Promise.reject(res.json())
+          return res.json().then(err => Promise.reject(err))
         }
         return res.json()
       })
@@ -36,7 +38,12 @@
         // TODO: store token and redirect
         console.log(res.authToken)
       })
-      .catch(err => console.error(err))
+      .catch(err => {
+        console.error(err)
+        // Note: all errors are set on password, since backend doesn't sort them out
+        tag.errors['password'] = err
+        // TODO: trigger rerendering?
+      })
     }
 
     tag.renderErrorOn = fieldName => {
@@ -50,29 +57,41 @@
       return null
     }
   </script>
-  <form onsubmit={tag.onFormSubmit}>
-    <div>
-      <label for="email-input">Email Address</label>
+  <form class="login-form" onsubmit={tag.onFormSubmit}>
+    <div class="c-input">
+      <label
+        for="email-input"
+        class="c-input__label"
+      >
+        Email Address
+      </label>
       <input
         id="email-input"
+        class="c-input__field"
         name="email"
         oninput={tag.onInputChange}
         type="email"
       />
       { tag.renderErrorOn('email') }
     </div>
-    <div>
-      <label for="password-input">Password</label>
+    <div class="c-input">
+      <label
+        for="password-input"
+        class="c-input__label"
+      >
+        Password
+      </label>
       <input
         id="password-input"
+        class="c-input__field"
         name="password"
         oninput={tag.onInputChange}
         type="password"
       />
       { tag.renderErrorOn('password') }
     </div>
-    <div>
-      <button>Login</button>
+    <div class="c-input">
+      <button class="c-btn">Login</button>
     </div>
   </form>
 </login-form>
