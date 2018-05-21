@@ -16,6 +16,7 @@
   "dependencies": {
     "angelabilities-exec": "0.1.0",
     "angelabilities-package-scripts": "0.1.0",
+    "async": "^2.6.0",
     "async-validate": "^0.13.2",
     "babel": "^6.5.2",
     "babel-core": "^6.7.6",
