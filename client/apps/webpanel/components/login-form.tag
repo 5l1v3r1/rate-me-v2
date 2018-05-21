@@ -42,14 +42,14 @@
         console.error(err)
         // Note: all errors are set on password, since backend doesn't sort them out
         tag.errors['password'] = err
-        // TODO: trigger rerendering?
+        tag.update()
       })
     }
 
-    tag.renderErrorOn = fieldName => {
+    tag.renderErrorOn = (createElement, fieldName) => {
       // 'if' directive in component does not seem to work when element is returned
       if (fieldName in tag.errors) {
-        return <span>
+        return <span class="c-input__error">
           {tag.errors[fieldName]}
         </span>
       }
@@ -72,7 +72,7 @@
         oninput={tag.onInputChange}
         type="email"
       />
-      { tag.renderErrorOn('email') }
+      { tag.renderErrorOn(createElement, 'email') }
     </div>
     <div class="c-input">
       <label
@@ -88,7 +88,7 @@
         oninput={tag.onInputChange}
         type="password"
       />
-      { tag.renderErrorOn('password') }
+      { tag.renderErrorOn(createElement, 'password') }
     </div>
     <div class="c-input">
       <button class="c-btn">Login</button>
