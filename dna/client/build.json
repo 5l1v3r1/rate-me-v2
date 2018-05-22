@@ -19,6 +19,6 @@
     "webpack": "dna/client/webpack.config.js"
   },
   "css": {
-    "src": "client/apps/**/*.bundle.css"
+    "src": "client/apps/**/*.less"
   }
 }
